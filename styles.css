@@ -1,0 +1,14 @@
+textarea.form-control {
+  height: 100px;
+}
+.go-btn {
+  margin: 10px 0px;
+}
+.request-headers, .request-body {
+  font-size: 12px;
+  color: #888;
+  margin: 0px 0px 5px 10px;
+}
+.request-headers a {
+  margin-left: 10px;
+}
