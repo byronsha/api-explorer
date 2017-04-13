@@ -1,40 +1,51 @@
 import React from 'react'
 import axios from 'axios'
-import Form from './Form'
+import CreateRequestForm from './CreateRequestForm'
 import Response from './Response'
-import PastRequest from './PastRequest'
+import Request from './Request'
 
 class Root extends React.Component {
   constructor() {
     super()
 
     this.state = {
-      response: null,
-      pastRequests: [],
-      errorMessage: null
+      requests: [],
+      testPassed: null,
+      errorMessage: ''
     }
 
-    this.makeRequest = this.makeRequest.bind(this)
+    this.createRequest = this.createRequest.bind(this)
+    this.testRequest = this.testRequest.bind(this)
+    this.handleUrlChange = this.handleUrlChange.bind(this)
   }
 
-  makeRequest(params) {
+  createRequest(params) {
+    this.setState({ requests: [params].concat(this.state.requests) })
+  }
+
+  testRequest(params) {
     axios({
       method: params.method,
       url: params.url,
       headers: params.headers,
-      data: params.body
     }).then(response => {
       this.setState({
-        response: response.data,
-        pastRequests: this.state.pastRequests.concat([params]),
-        errorMessage: null
+        testPassed: 'p',
+        errorMessage: ''
       })
     }).catch(error => {
       console.log(error)
       this.setState({
-        response: null,
+        testPassed: 'f',
         errorMessage: error.toString()
       })
+    })
+  }
+
+  handleUrlChange() {
+    this.setState({
+      testPassed: null,
+      errorMessage: ''
     })
   }
 
@@ -43,7 +54,12 @@ class Root extends React.Component {
       <div className="container">
         <h2>API Explorer</h2>
         <hr/>
-        <Form makeRequest={this.makeRequest} />
+        <CreateRequestForm
+          createRequest={this.createRequest}
+          testRequest={this.testRequest}
+          testPassed={this.state.testPassed}
+          onUrlChange={this.handleUrlChange}
+        />
 
         {this.state.response &&
           <Response response={this.state.response} />
@@ -55,9 +71,9 @@ class Root extends React.Component {
 
         <hr/>
 
-        <h4>Past requests</h4>
-        {this.state.pastRequests.map((request, index) => {
-          return <PastRequest key={index} request={request} />
+        <h4>Requests</h4>
+        {this.state.requests.map((request, index) => {
+          return <Request key={request.timestamp} request={request} />
         })}
       </div>
     )

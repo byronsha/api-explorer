@@ -2,7 +2,7 @@ textarea.form-control {
   height: 100px;
 }
 .go-btn {
-  margin: 10px 0px;
+  margin: 10px 5px 10px 0px;
 }
 .request-headers, .request-body {
   font-size: 12px;
@@ -11,4 +11,7 @@ textarea.form-control {
 }
 .request-headers a {
   margin-left: 10px;
+}
+.parameters {
+  width: 25%;
 }

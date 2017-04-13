@@ -2,7 +2,7 @@ import React from 'react'
 import axios from 'axios'
 import Response from './Response'
 
-class PastRequest extends React.Component {
+class Request extends React.Component {
   constructor() {
     super()
 
@@ -25,6 +25,23 @@ class PastRequest extends React.Component {
     })
   }
 
+  createMarkup() {
+    let inputs = eval(JSON.parse(this.props.request.body))
+    let htmlString = ''
+    
+    for (let i = 0; i < inputs.length; i++) {
+      let current = inputs[i]
+      let element = `<input`
+      for (let key in current) {
+        element += ` ${key}="${current[key]}"`
+      }
+      element += ` placeholder="${current.name}" class="form-control" /><br/>`
+      htmlString += element
+    }
+
+    return {__html: htmlString}
+  }
+
   render() {
     const { request } = this.props
 
@@ -43,8 +60,8 @@ class PastRequest extends React.Component {
           })}
         </div>
 
-        <h5>Body</h5>
-        <div className="request-body">{request.body}</div>
+        <h5>Parameters</h5>
+        <div className="parameters" dangerouslySetInnerHTML={this.createMarkup()} />
 
         {this.state.response &&
           <Response response={this.state.response} />
@@ -54,4 +71,4 @@ class PastRequest extends React.Component {
   }
 }
 
-export default PastRequest
+export default Request

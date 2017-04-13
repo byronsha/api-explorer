@@ -32,13 +32,39 @@ class Form extends React.Component {
       url: url,
       method: method,
       headers: this.state.headers,
-      body: body
+      body: JSON.stringify(body),
+      timestamp: Date.now()
     }
-    this.props.makeRequest(params)
+    
+    this.props.createRequest(params)
+  }
+
+  handleTestClick(url, method) {
+    if (!url) { return }
+
+    let params = {
+      url: url,
+      method: method,
+      headers: this.state.headers
+    }
+    
+    this.props.testRequest(params)
   }
 
   render() {
     let endpointUrl, httpMethod, headerKey, headerValue, body
+    let { testPassed, onUrlChange } = this.props
+    
+    let testMessage = 'Test endpoint'
+    let testBtnClass = 'primary'
+
+    if (testPassed && testPassed === 'p') {
+      testMessage = 'Test passed'
+      testBtnClass = 'success'
+    } else if (testPassed && testPassed === 'f') {
+      testMessage = 'Test failed'
+      testBtnClass = 'danger'
+    }
 
     return (
       <div>
@@ -49,6 +75,7 @@ class Form extends React.Component {
               type="text"
               placeholder="https://www.yoursite.com/api"
               ref={ref => endpointUrl = ref}
+              onChange={onUrlChange}
             />
           </div>
           <div className="col-md-2">
@@ -107,7 +134,7 @@ class Form extends React.Component {
           <div className="col-md-12">
             <textarea
               className="form-control"
-              placeholder={'[{name: "email"}, {name: "full-name"}, {name: "phone"}]'}
+              defaultValue={'[{name: "email", type: "email", max: 24, min: 3}]'}
               ref={ref => body = ref}
             />
           </div>
@@ -116,10 +143,16 @@ class Form extends React.Component {
         <div className="row">
           <div className="col-md-6">
             <button
-              className="btn btn-success go-btn"
+              className="btn btn-primary go-btn"
               onClick={() => this.handleClick(endpointUrl.value, httpMethod.value, body.value)}
             >
-              Go!
+              Create Request
+            </button>
+            <button
+              className={`btn btn-${testBtnClass} go-btn`}
+              onClick={() => this.handleTestClick(endpointUrl.value, httpMethod.value)}
+            >
+              {testMessage}
             </button>
           </div>
         </div>
